@@ -1,2 +1,16 @@
+
+
+#Spark
+
+#sparkmagic	#Connect to Spark through Livy
+
+#ML
+turicreate
+
+
 #Essentials
-pandas		#Pandas http://pandas.pydata.org/
+pandas          #Pandas http://pandas.pydata.org/
+
+#Dependencies
+setuptools	#Required by many things
+wheel 	#Required for turicreate
