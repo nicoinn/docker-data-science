@@ -5,7 +5,7 @@ ENV SPARK_VERSION 2.3.1
 
 #Set the time zone
 ENV TZ=Europe/Stockholm
-
+ENV PORT=8888
 
 #Commit the time zone configuration
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -13,7 +13,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY pkglist_* /
 
-RUN apt-get update && apt-get install -y --no-install-recommends `cat pkglist_apt | awk '($1!~/^#/) && ($1!~/^$/) {print $1}' ` \ 
+RUN apt-get update && apt-get install -y --no-install-recommends `cat pkglist_apt | awk '($1!~/^#/) && ($1!~/^$/) {print $1}' ` \
                && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -36,18 +36,15 @@ RUN python3 -m pip install -U `cat /pkglist_python | awk '($1!~/^#/) && ($1!~/^$
 #Install Jupyter kernels
 RUN pip install ipykernel \
 	&& python3 -m pip install ipykernel sparkmagic spylon-kernel \
-    	&& python3 -m ipykernel install \ 
+    	&& python3 -m ipykernel install \
     	&& python2 -m ipykernel install \
-	&& python3 -m spylon_kernel install 
-
+	&& python3 -m spylon_kernel install
 
 RUN mkdir /data
 
+COPY jupyter_notebook_config.py /root/.jupyter/
 
-COPY entrypoint.sh /
-RUN chmod a+x /entrypoint.sh
-
-RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension 
+RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 WORKDIR /data
-ENTRYPOINT ["/entrypoint.sh"]
+CMD /usr/local/bin/jupyter notebook --port=$PORT --ip=0.0.0.0 --no-browser --allow-root --custom_display_url="prout"
