@@ -6,11 +6,14 @@
 
 #ML
 turicreate
-
+xgboost
+sklearn
 
 #Essentials
 pandas          #Pandas http://pandas.pydata.org/
+seaborn 	#Visualization library - https://seaborn.pydata.org/
 
 #Dependencies
 setuptools	#Required by many things
 wheel 	#Required for turicreate
+statsmodels	#Required for seaborn 
