@@ -697,3 +697,46 @@
 #O verride URL shown to users.
 
 c.NotebookApp.custom_display_url = "http://localhost:8888"
+
+def script_post_save(model, os_path, contents_manager, **kwargs):
+    """convert notebooks to Python script after save with nbconvert
+    replaces `ipython notebook --script`
+    """
+    from nbconvert.exporters.python import PythonExporter
+    from nbconvert.exporters.html import HTMLExporter
+
+    if model['type'] != 'notebook':
+        return
+
+    global _python_exporter
+    if _python_exporter is None:
+        _python_exporter = PythonExporter(parent=contents_manager)
+    log = contents_manager.log
+
+    global _html_exporter
+    if _html_exporter is None:
+        _html_exporter = HTMLExporter(parent=contents_manager)
+    log = contents_manager.log
+
+    # save .py file
+    base, ext = os.path.splitext(os_path)
+    script, resources = _python_exporter.from_filename(os_path)
+    script_fname = base + '.py'
+    log.info("Saving python /%s", to_api_path(script_fname, contents_manager.root_dir))
+    with io.open(script_fname, 'w', encoding='utf-8') as f:
+        f.write(script)
+    
+    import subprocess
+    subprocess.Popen("/bin/mv {0} {0}.tmp".format(script_fname),shell=True) 
+    subprocess.Popen("cat {0}.tmp | grep -v get_ipython | grep -v '# In\[' | cat -s > {0}".format(script_fname),shell=True)
+    subprocess.Popen("rm {0}.tmp".format(script_fname),shell=True)
+
+    # save html
+    base, ext = os.path.splitext(os_path)
+    script, resources = _html_exporter.from_filename(os_path)
+    script_fname =base + resources.get('output_extension', '.html')
+    log.info("Saving html /%s", to_api_path(script_fname, contents_manager.root_dir))
+    with io.open(script_fname, 'w', encoding='utf-8') as f:
+        f.write(script)
+
+c.FileContentsManager.post_save_hook = script_post_save

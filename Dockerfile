@@ -47,4 +47,4 @@ COPY jupyter_notebook_config.py /root/.jupyter/
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 WORKDIR /data
-CMD /usr/local/bin/jupyter notebook --port=$PORT --ip=0.0.0.0 --no-browser --allow-root --custom_display_url="prout"
+CMD /usr/local/bin/jupyter lab --port=$PORT --ip=0.0.0.0 --no-browser --allow-root --custom_display_url="prout"
