@@ -699,6 +699,10 @@
 c.NotebookApp.custom_display_url = "http://localhost:8888"
 
 def script_post_save(model, os_path, contents_manager, **kwargs):
+    import os
+    from notebook.utils import to_api_path
+    import io
+    
     """convert notebooks to Python script after save with nbconvert
     replaces `ipython notebook --script`
     """
@@ -709,13 +713,13 @@ def script_post_save(model, os_path, contents_manager, **kwargs):
         return
 
     global _python_exporter
-    if _python_exporter is None:
-        _python_exporter = PythonExporter(parent=contents_manager)
+        #if _python_exporter is None:
+    _python_exporter = PythonExporter(parent=contents_manager)
     log = contents_manager.log
 
     global _html_exporter
-    if _html_exporter is None:
-        _html_exporter = HTMLExporter(parent=contents_manager)
+        #if _html_exporter is None:
+    _html_exporter = HTMLExporter(parent=contents_manager)
     log = contents_manager.log
 
     # save .py file

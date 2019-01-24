@@ -13,7 +13,14 @@ sklearn
 pandas          #Pandas http://pandas.pydata.org/
 seaborn 	#Visualization library - https://seaborn.pydata.org/
 
+
+
+
 #Dependencies
 setuptools	#Required by many things
 wheel 	#Required for turicreate
 statsmodels	#Required for seaborn 
+
+#Useful tools
+holidays	#Library to get easily days off in various places in the world
+
